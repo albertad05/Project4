@@ -40,7 +40,42 @@ def latLonGen():
 
   # Write the dictionary to the LatLon.txt file with the correct styling
   with open("LatLon.txt", "w") as file:
-    file.write("\n".join(f"{z} {la} {lo}" for z, (la, lo) in zipLatLon.items()))
+    file.write("\n".join(f"{z} {la} {lo}" for z, (la, lo) in zipLatLon.items())) 
+
+# Ranold Antwi
+
+def cityStatesGen():
+  # Read the cities we need to look up. We us upper() b/c
+  # zipcodes.txt stores every city name in all capital letters
+  with open("cities.txt", "r") as file:
+    cities = [line.strip().upper() for line in file if line.strip()]
+
+  # each city starts with an empty set of states.
+  # A set is used so each state can only be saved once per city
+  cityStates = {city: set() for city in cities}
+
+  # Go through zipcodes.txt one line at a time
+  with open("zipcodes.txt", "r") as file:
+    next(file)  # skip the header line
+    for line in file:
+      parts = line.split("\t")
+      # skip blank or broken lines
+      if len(parts) < 5:
+        continue
+      city = parts[3]   
+      state = parts[4] 
+      # only save the state if this is one of the cities we care about
+      if city in cityStates:
+        cityStates[city].add(state)
+
+ 
+  # the states sorted and separated by a space
+  lines = [" ".join(sorted(cityStates[city])) for city in cities]
+
+  # Write the lines to the CityStates.txt file
+  with open("CityStates.txt", "w") as file:
+    file.write("\n".join(lines))
+
 
 
 if __name__ == "__main__": 
