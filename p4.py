@@ -17,6 +17,32 @@ import time
 2- => Filter or map was used in line/s: ...........
 3- => yield was used in line/s: .........
 """
+# AJ Marin and Leah Johnston
+# Generates a list of states from states.txt
+def readStates():
+   with open("states.txt", 'r') as stateFile:
+      states = [state.strip() for state in stateFile if state.strip() != ""]
+      return states
+
+# Creates a generator that yields the city and state from each line of zipcodes.txt
+def readZipCodes():
+   with open("zipcodes.txt", 'r') as zipFile:
+      for line in zipFile:
+        parts = line.strip().split('\t')
+        yield parts[3], parts[4]
+
+# Inserts the common city names between the states in states.txt into common_citites.txt
+def getCommonCityNames():
+  stateCities = {state: set() for state in readStates()}
+
+  for city, state in readZipCodes():
+     if state in stateCities:
+        stateCities[state].add(city)
+
+  commonCities = sorted(set.intersection(*stateCities.values()))
+
+  with open("common_cities.txt", 'w') as outFile:
+      outFile.writelines(f"{city}\n" for city in commonCities)
 
 # Andrew Albert
 # Function to generate the LatLon.txt file
